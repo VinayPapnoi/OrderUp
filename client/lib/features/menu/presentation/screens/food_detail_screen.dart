@@ -278,7 +278,7 @@ class _FoodDetailScreenState extends ConsumerState<FoodDetailScreen> {
                 child: _buildInfoCard(
                   Icons.access_time,
                   "Prep Time",
-                  "20-25 min",
+                  "02-03 min",
                 ),
               ),
             ],
