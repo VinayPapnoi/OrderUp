@@ -1,6 +1,8 @@
 import 'package:client/features/menu/presentation/providers/menu_provider.dart';
 import 'package:client/features/menu/presentation/screens/food_detail_screen.dart';
 import 'package:client/features/menu/presentation/screens/search_screen.dart';
+import 'package:client/features/order/presentation/providers/cart_provider.dart';
+import 'package:client/features/profile/features/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
@@ -142,6 +144,8 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
   }
 
   Widget _buildHeader() {
+    final profileAsync = ref.watch(profileProvider);
+    final cartItems = ref.watch(cartProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -184,31 +188,55 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
               ),
             ),
             const Spacer(),
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Colors.deepOrange, Colors.deepOrange.shade700],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.deepOrange.withOpacity(0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
+
+            GestureDetector(
+              onTap: () => Navigator.of(context).pushNamed('cart'),
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [Colors.deepOrange, Colors.deepOrange.shade700],
                   ),
-                ],
-              ),
-              child: CircleAvatar(
-                radius: 22,
-                backgroundColor: Colors.transparent,
-                child: ClipOval(
-                  child: Image.network(
-                    "https://i.imgur.com/your_avatar_image.jpg",
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) =>
-                        Icon(Icons.person, color: Colors.white, size: 24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.deepOrange.withOpacity(0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: CircleAvatar(
+                  radius: 22,
+                  backgroundColor: Colors.transparent,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      const Icon(
+                        Icons.shopping_cart,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                      if (cartItems.isNotEmpty)
+                        Positioned(
+                          right: -2,
+                          top: -2,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              cartItems.length.toString(),
+                              style: const TextStyle(
+                                color: Colors.deepOrange,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ),
@@ -235,80 +263,105 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
           shaderCallback: (bounds) => LinearGradient(
             colors: [Colors.white, Colors.deepOrange.shade200],
           ).createShader(bounds),
-          child: const Text(
-            "Mimi 👋",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 36,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -1,
-              height: 1.2,
+          child: profileAsync.when(
+            data: (user) => Text(
+              "${user?['name'] ?? 'Guest'} 👋",
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 36,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -1,
+                height: 1.2,
+              ),
+            ),
+            loading: () => const Text(
+              ".... 👋",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 36,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -1,
+                height: 1.2,
+              ),
+            ),
+            error: (_, __) => const Text(
+              "Guest 👋",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 36,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -1,
+                height: 1.2,
+              ),
             ),
           ),
         ),
         const SizedBox(height: 26),
-       GestureDetector(
-  onTap: () => Navigator.of(context).pushNamed('search'),
-  child: Container(
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(24),
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Colors.white.withOpacity(0.08),
-          Colors.white.withOpacity(0.03),
-        ],
-      ),
-      border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.2),
-          blurRadius: 20,
-          offset: const Offset(0, 10),
-        ),
-      ],
-    ),
-    padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
-    child: Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 12),
-          child: Icon(
-            Icons.search_rounded,
-            color: Colors.white.withOpacity(0.5),
-            size: 26,
-          ),
-        ),
-        Expanded(
-          child: Text(
-            "Search for delicious food...",
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.4),
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
+        GestureDetector(
+          onTap: () => Navigator.of(context).pushNamed('search'),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withOpacity(0.08),
+                  Colors.white.withOpacity(0.03),
+                ],
+              ),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.1),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: Icon(
+                    Icons.search_rounded,
+                    color: Colors.white.withOpacity(0.5),
+                    size: 26,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    "Search for delicious food...",
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.4),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.deepOrange, Colors.deepOrange.shade700],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.all(6),
+                  child: const Icon(
+                    Icons.tune_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-        Container(
-          margin: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.deepOrange, Colors.deepOrange.shade700],
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          padding: const EdgeInsets.all(6),
-          child: const Icon(
-            Icons.tune_rounded,
-            color: Colors.white,
-            size: 20,
-          ),
-        ),
-      ],
-    ),
-  ),
-),
 
         const SizedBox(height: 28),
         SizedBox(
@@ -466,7 +519,6 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
   }
 
   Widget _buildTrendingCard(MenuItemEntity item) {
-
     const double cardWidth = 240;
     const double imageRatio = 16 / 9;
     const double imageHeight = cardWidth / imageRatio;
@@ -483,9 +535,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
             Colors.white.withOpacity(0.03),
           ],
         ),
-        borderRadius: BorderRadius.circular(
-          24,
-        ),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
         boxShadow: [
           BoxShadow(
@@ -500,8 +550,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Stack(
-            clipBehavior:
-                Clip.none,
+            clipBehavior: Clip.none,
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(18),
@@ -524,9 +573,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(
-                          0.2,
-                        ), 
+                        color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: Colors.white.withOpacity(0.2),
@@ -613,9 +660,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                   ),
 
                   Container(
-                    padding: const EdgeInsets.all(
-                      8,
-                    ), 
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [Colors.deepOrange, Colors.deepOrange.shade700],

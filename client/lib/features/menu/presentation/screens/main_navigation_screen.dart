@@ -1,4 +1,5 @@
 import 'package:client/features/menu/presentation/screens/search_screen.dart';
+import 'package:client/features/order/presentation/screens/cart_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:client/features/menu/presentation/screens/home_screen.dart';
@@ -188,6 +189,9 @@ class HomeNavigator extends StatelessWidget {
             break;
           case 'search':
             builder = (BuildContext _) => const SearchScreen();
+            break;
+          case 'cart':
+            builder = (BuildContext _) => const CartScreen();
             break;
           default:
             throw Exception('Invalid route: ${settings.name}');

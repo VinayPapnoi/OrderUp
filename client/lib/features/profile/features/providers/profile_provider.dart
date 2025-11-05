@@ -15,9 +15,16 @@ final profileProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
   dev.log("Session Raw User JSON: ${session.user}");
 
   try {
-    final userMap = jsonDecode(session.user);
-    dev.log("Parsed user data: $userMap");
-    return userMap;
+    dynamic firstDecode = jsonDecode(session.user);
+
+    // ✅ If first decode returns a STRING, decode again
+    if (firstDecode is String) {
+      dev.log("Detected nested JSON string. Decoding again...");
+      firstDecode = jsonDecode(firstDecode);
+    }
+
+    dev.log("Parsed user data: $firstDecode");
+    return firstDecode;
   } catch (e) {
     dev.log("Failed to parse session user JSON: $e");
     return null;
