@@ -40,6 +40,7 @@ dependencies:
   hive_flutter: ^1.1.0
   socket_io_client: ^3.1.2
   shimmer: ^3.0.0
+  lottie: ^3.3.2
 
 dev_dependencies:
 
@@ -52,9 +53,15 @@ dev_dependencies:
   analyzer: 
   build_runner: 
   hive_generator: 
+  flutter_launcher_icons: ^0.9.2
   flutter_test:
     sdk: flutter
-
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon.png"
+  ios_icon_size: 120
+  remove_alpha_ios: true
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.
