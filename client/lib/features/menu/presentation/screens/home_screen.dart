@@ -3,6 +3,7 @@ import 'package:client/features/menu/presentation/screens/food_detail_screen.dar
 import 'package:client/features/menu/presentation/screens/search_screen.dart';
 import 'package:client/features/order/presentation/providers/cart_provider.dart';
 import 'package:client/features/profile/features/providers/profile_provider.dart';
+import 'package:client/features/chatbot/presentation/screens/chatbot_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
@@ -34,6 +35,40 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
           _setCategories(menuItems);
           return _buildContent(context, menuItems, trendingState);
         },
+      ),
+      floatingActionButton: _buildChatbotFAB(),
+    );
+  }
+
+  Widget _buildChatbotFAB() {
+    return Container(
+
+      child: FloatingActionButton.extended(
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => const ChatbotScreen(),
+          );
+        },
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        label: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFF8C42), Colors.deepOrange.shade700],
+            ),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [const Icon(Icons.chat, color: Colors.white, size: 24)],
+          ),
+        ),
       ),
     );
   }
@@ -195,7 +230,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: [Colors.deepOrange, Colors.deepOrange.shade700],
+                    colors: [Color(0xFFFF8C42), Colors.deepOrange.shade700],
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -347,7 +382,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
                   margin: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.deepOrange, Colors.deepOrange.shade700],
+                      colors: [Color(0xFFFF8C42), Colors.deepOrange.shade700],
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -395,7 +430,7 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
               ? LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.deepOrange, Colors.deepOrange.shade700],
+                  colors: [Color(0xFFFF8C42), Colors.deepOrange.shade700],
                 )
               : null,
           color: selected ? null : Colors.white.withOpacity(0.06),
@@ -438,7 +473,6 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
-          //TODO: OVERFLOW FIX KARNA HAI
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -521,7 +555,6 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
 
   Widget _buildTrendingCard(MenuItemEntity item) {
     const double cardWidth = 240;
-    //final double cardWidth = MediaQuery.of(context).size.width * 0.6;
     const double imageRatio = 16 / 9;
     const double imageHeight = cardWidth / imageRatio;
 
@@ -548,7 +581,6 @@ class _HomeScreenContentState extends ConsumerState<HomeScreenContent> {
         ],
       ),
       child: Column(
-        //TODO: OVERFLOW FIX HARNA HAI
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
