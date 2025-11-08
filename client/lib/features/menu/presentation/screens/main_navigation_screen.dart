@@ -35,10 +35,22 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF16161F),
-      body: IndexedStack(index: _selectedBottomIndex, children: _screens),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+    return WillPopScope(
+      onWillPop: () async {
+        // If we are NOT on Home screen, go to Home instead of leaving app
+        if (_selectedBottomIndex != 0) {
+          setState(() {
+            _selectedBottomIndex = 0;
+          });
+          return false; // prevents exiting app
+        }
+        return true; // allow exit when already on Home
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFF16161F),
+        body: IndexedStack(index: _selectedBottomIndex, children: _screens),
+        bottomNavigationBar: _buildBottomNavigationBar(),
+      ),
     );
   }
 

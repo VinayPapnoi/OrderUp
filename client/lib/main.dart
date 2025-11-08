@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'core/router/app_router.dart'; // ✅ Keep this
+import 'core/router/app_router.dart';
 import 'features/auth/data/models/session_model.dart';
 import 'core/colors.dart';
 
