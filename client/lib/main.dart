@@ -5,7 +5,7 @@ import 'package:client/features/menu/presentation/screens/main_navigation_screen
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'core/router/app_router.dart';
 import 'features/auth/data/models/session_model.dart';
 
 import 'features/auth/presentation/screens/login_screen.dart';

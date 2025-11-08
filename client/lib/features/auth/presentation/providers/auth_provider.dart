@@ -5,6 +5,7 @@ import 'package:client/features/auth/domain/usecases/login_usecase.dart';
 import 'package:client/features/auth/domain/usecases/register_usecase.dart';
 import 'package:client/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:client/features/auth/domain/entities/session_entity.dart';
+import 'package:client/features/profile/features/providers/profile_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
@@ -91,6 +92,9 @@ class AuthStateNotifier extends StateNotifier<AsyncValue<bool>> {
 
       await usecase();
 
+
+      ref.invalidate(profileProvider);
+      
       state = const AsyncValue.data(false); // User logged out
       client.close();
       return true;

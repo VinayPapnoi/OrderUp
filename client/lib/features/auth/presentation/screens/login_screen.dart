@@ -4,6 +4,7 @@ import 'package:client/features/admin/presentation/screens/admin_menu_screen.dar
 import 'package:client/features/admin/presentation/screens/admin_screen.dart';
 import 'package:client/features/auth/presentation/providers/auth_provider.dart';
 import 'package:client/features/menu/presentation/screens/main_navigation_screen.dart';
+import 'package:client/features/profile/features/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/colors.dart';
 import '../widgets/custom_text_field.dart';
@@ -53,6 +54,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         final user = jsonDecode(session.user);
 
         final role = user['role'] ?? '';
+
+         ref.invalidate(profileProvider);
 
         if (role == 'admin') {
           Navigator.pushReplacement(
