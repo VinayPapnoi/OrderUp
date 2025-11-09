@@ -7,10 +7,45 @@ export const getTop10Recommendations = async (req, res, next) => {
   try {
     const { Category, Group_Size, Rating, Avg_Spend, Delivery_Time } = req.body;
 
+    const groupSize = Number(Group_Size);
+    const rating = Number(Rating);
+    const avgSpend = Number(Avg_Spend);
+    const deliveryTime = Number(Delivery_Time);
+
+    const validCategories = [
+      "Dessert",
+      "Drink",
+      "Fast Food",
+      "Main Course",
+      "Snack",
+    ];
+
     if (!Category) {
       throw new CustomError("Category is required", 400);
     }
+    if (!validCategories.includes(Category)) {
+      throw new CustomError(
+        `Invalid Category. Must be one of: ${validCategories.join(", ")}`,
+        400
+      );
+    }
     
+    if (avgSpend < 0 || avgSpend > 1000) {
+      throw new CustomError("Avg_Spend must be between 0 and 1000", 400);
+    }
+
+    if (groupSize < 1 || groupSize > 10) {
+      throw new CustomError("Group_Size must be between 1 and 10", 400);
+    }
+     
+    if (rating < 1 || rating > 5) {
+      throw new CustomError("Rating must be between 1 and 5", 400);
+    }
+
+    if (deliveryTime < 0 || deliveryTime > 30) {
+      throw new CustomError("Delivery_Time must be between 0 and 30 minutes", 400);
+    }
+
     const response = await axios.post(
       ML_MODEL_URL,
       {  Category, Group_Size, Rating, Avg_Spend, Delivery_Time},
@@ -25,26 +60,32 @@ export const getTop10Recommendations = async (req, res, next) => {
       recommendations: response.data,
     });
   } catch (error) {
-    console.error("ML model error:", error.message);
+    console.error("🔴 ML model request failed:", error);
 
-    if (error.response) {
-      const statusCode = error.response.status || 500;
-      const message =
-        error.response.data?.error ||
-        error.response.data?.detail ||
-        "Error from ML model.";
-      return next(new CustomError(message, statusCode));
-    }
+    // 🧠 Preserve real ML or validation messages
+    const mlErrorMessage =
+      error.response?.data?.message ||
+      error.message ||
+      "Failed to connect to ML service. Please try again later.";
 
-    if (error.code === "ECONNABORTED") {
-      return next(new CustomError("ML service timed out. Please try again later.", 504));
-    }
+    // Detect if it's a user-facing validation error
+    const isClientError =
+      error.response?.status === 400 ||
+      mlErrorMessage.includes("must") ||
+      mlErrorMessage.includes("invalid");
 
-    return next(
-      new CustomError(
-        "Failed to connect to ML service. Please try again later.",
-        500
-      )
-    );
+    const statusCode = isClientError ? 400 : 500;
+    next(new CustomError(mlErrorMessage, statusCode));
   }
 };
+
+
+
+
+
+
+
+
+
+
+
