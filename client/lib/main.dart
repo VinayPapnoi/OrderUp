@@ -18,7 +18,7 @@ void main() async {
   if (!Hive.isAdapterRegistered(0)) {
     Hive.registerAdapter(SessionModelAdapter());
   }
-
+  
   await Hive.openBox<SessionModel>(_sessionBoxName);
 
   runApp(const ProviderScope(child: MyApp()));

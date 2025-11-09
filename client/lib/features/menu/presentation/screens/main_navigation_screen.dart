@@ -24,7 +24,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   void initState() {
     super.initState();
     _screens = [
-      const HomeScreenContent(), // CHANGED
+      const HomeScreenContent(),
       const Center(
         child: Text('Notifications', style: TextStyle(color: Colors.white)),
       ),
@@ -37,7 +37,7 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // If we are NOT on Home screen, go to Home instead of leaving app, very simple aur easy
+        // If we are NOT on Home screen, go to Home instead of leaving app
         if (_selectedBottomIndex != 0) {
           setState(() {
             _selectedBottomIndex = 0;
@@ -76,15 +76,11 @@ class _MainNavigationScreenState extends ConsumerState<MainNavigationScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              Expanded(child: _buildNavItem(Icons.home, "Home", 0)),
-              Expanded(
-                child: _buildNavItem(Icons.notifications_outlined, "Notif", 1),
-              ),
+              _buildNavItem(Icons.home, "Home", 0),
+              _buildNavItem(Icons.notifications_outlined, "Notif", 1),
               _buildFloatingActionButton(),
-              Expanded(child: _buildNavItem(Icons.favorite_border, "Fav", 2)),
-              Expanded(
-                child: _buildNavItem(Icons.person_outline, "Profile", 3),
-              ),
+              _buildNavItem(Icons.favorite_border, "Fav", 2),
+              _buildNavItem(Icons.person_outline, "Profile", 3),
             ],
           ),
         ),
@@ -159,6 +155,7 @@ class AnimatedNavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque, // Makes entire area tappable
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
         child: Column(
@@ -234,5 +231,3 @@ class FavoritesScreen extends StatelessWidget {
     );
   }
 }
-
-// GoRouter handles search/cart navigation now from home_screen.dart

@@ -928,7 +928,7 @@ Widget _buildFoodCard(MenuItemEntity item) {
                             ),
                             const SizedBox(width: 4),
                             const Text(
-                              "4.5",
+                              "4.8",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700,
